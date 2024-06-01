@@ -1,0 +1,18 @@
+<html><body>
+
+<form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+    <!-- Form fields for PAN, Full Name, Email, Mobile Number -->
+  
+    <div formArrayName="addresses">
+      <div *ngFor="let addressGroup of customerForm.get('addresses').controls; let i = index">
+        <!-- Form fields for Address Line 1, Address Line 2, Postcode, State, City -->
+      </div>
+    </div>
+  
+    <button type="button" (click)="addAddress()">Add Address</button>
+    <button type="button" *ngIf="customerForm.get('addresses').length > 1" (click)="removeAddress(0)">Remove Address</button>
+  
+    <button type="submit" [disabled]="!customerForm.valid">Submit</button>
+  </form>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify PAN</title>
+  <script>
+    function verifyPAN() {
+      const panNumber = document.getElementById('pan').value;
+      const loader = document.getElementById('loader');
+      loader.style.display = 'inline-block'; // Display loader while fetching data
+
+      fetch('https://lab.pixel6.co/api/verify-pan.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ panNumber: panNumber })
+      })
+      .then(response => response.json())
+      .then(data => {
+        loader.style.display = 'none'; // Hide loader after data is received
+
+        if (data.status === 'Success' && data.isValid) {
+          // Prefill fullname field with received fullname
+          document.getElementById('fullname').value = data.fullName;
+        } else {
+          alert('Invalid PAN. Please enter a valid PAN number.');
+        }
+      })
+      .catch(error => {
+        loader.style.display = 'none'; // Hide loader in case of error
+        console.error('Error verifying PAN:', error);
+        alert('Error verifying PAN. Please try again later.');
+      });
+    }
+  </script>
+</head>
+<body>
+  <label for="pan">Enter PAN:</label>
+  <input type="text" id="pan">
+  <button onclick="verifyPAN()">Verify PAN</button>
+  <img id="loader" src="loader.gif" alt="Loading..." style="display: none;">
+
+  <label for="fullname">Full Name:</label>
+  <input type="text" id="fullname">
+</body>
+</html>

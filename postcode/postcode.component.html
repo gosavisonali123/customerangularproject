@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Postcode Details</title>
+  <script>
+    function getPostcodeDetails() {
+      const postcode = document.getElementById('postcode').value;
+      const loader = document.getElementById('loader');
+      loader.style.display = 'inline-block'; // Display loader while fetching data
+
+      fetch('https://lab.pixel6.co/api/get-postcode-details.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ postcode: postcode })
+      })
+      .then(response => response.json())
+      .then(data => {
+        loader.style.display = 'none'; // Hide loader after data is received
+
+        if (data.status === 'Success') {
+          // Prefill city and state fields with received values
+          const citySelect = document.getElementById('city');
+          const stateSelect = document.getElementById('state');
+
+          // Clear existing options
+          citySelect.innerHTML = '';
+          stateSelect.innerHTML = '';
+
+          // Add received options
+          data.city.forEach(city => {
+            const option = document.createElement('option');
+            option.text = city.name;
+            option.value = city.id;
+            citySelect.appendChild(option);
+          });
+
+          data.state.forEach(state => {
+            const option = document.createElement('option');
+            option.text = state.name;
+            option.value = state.id;
+            stateSelect.appendChild(option);
+          });
+        } else {
+          alert('Failed to fetch postcode details. Please try again.');
+        }
+      })
+      .catch(error => {
+        loader.style.display = 'none'; // Hide loader in case of error
+        console.error('Error fetching postcode details:', error);
+        alert('Error fetching postcode details. Please try again later.');
+      });
+    }
+  </script>
+</head>
+<body>
+  <label for="postcode">Enter Postcode:</label>
+  <input type="text" id="postcode">
+  <button onclick="getPostcodeDetails()">Get Details</button>
+  <img id="loader" src="loader.gif" alt="Loading..." style="display: none;">
+
+  <label for="city">City:</label>
+  <select id="city"></select>
+
+  <label for="state">State:</label>
+  <select id="state"></select>
+</body>
+</html>
+
